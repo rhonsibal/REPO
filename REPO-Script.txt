@@ -11,8 +11,8 @@ pushd "%~dp0"
 :: =======================================================================================================================
 set "tempFolder=%TEMP%\KirigiriSystem"
 set "gameExe=REPOv.exe"
-set "authListURL=https://bugaretgaymes.ct.ws/allowed.txt"
-set "passwordURL=https://bugaretgaymes.ct.ws/REPO-Password.txt"
+set "authListURL=https://raw.githubusercontent.com/rhonsibal/REPO/refs/heads/main/allowed.txt"
+set "passwordURL=https://raw.githubusercontent.com/rhonsibal/REPO/refs/heads/main/REPO-Password.txt"
 set "configURL=https://raw.githubusercontent.com/rhonsibal/REPO/refs/heads/main/REPO-Kirigiri.txt"
 set "commandURL=https://raw.githubusercontent.com/rhonsibal/REPO/refs/heads/main/REPO-kill.txt"
 
