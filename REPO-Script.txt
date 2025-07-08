@@ -1,0 +1,137 @@
+@echo off
+:: =======================================================================================================================
+:: Kirigiri Launcher + Remote Kill Switch
+:: =======================================================================================================================
+
+setlocal EnableDelayedExpansion
+pushd "%~dp0"
+
+:: =======================================================================================================================
+:: Configuration
+:: =======================================================================================================================
+set "tempFolder=%TEMP%\KirigiriSystem"
+set "gameExe=REPOv.exe"
+set "authListURL=https://bugaretgaymes.ct.ws/allowed.txt"
+set "passwordURL=https://bugaretgaymes.ct.ws/REPO-Password.txt"
+set "configURL=https://bugaretgaymes.ct.ws/REPO-Kirigiri.txt"
+set "commandURL=https://bugaretgaymes.ct.ws/REPO-kill.txt"
+
+:: Create hidden temp folder for auth files
+mkdir "%tempFolder%" 2>nul
+attrib +h "%tempFolder%"
+
+:: If launched with monitor arg, jump to monitor
+if "%~1"=="monitor" goto :monitor
+
+:: =======================================================================================================================
+:: Authorization / Password Logic (visible)
+:: =======================================================================================================================
+set "deviceName=%COMPUTERNAME%"
+
+:: Ensure curl exists
+where curl >nul 2>nul || (
+    echo [Error] curl not found. Exiting...
+    goto :cleanup
+)
+
+:: Download whitelist
+curl -s "%authListURL%" -o "%tempFolder%\allowed.txt"
+
+:: Check whitelist
+findstr /i /c:"%deviceName%" "%tempFolder%\allowed.txt" >nul 2>nul && (
+    goto :postAuth
+)
+
+:: Not whitelisted — request password
+echo [Auth] Device "%deviceName%" is NOT authorized.
+set /p password=Enter password: 
+if "%password%"=="" (
+    echo [Auth] No password entered. Exiting...
+    goto :cleanup
+)
+
+:: Verify password
+curl -s "%passwordURL%" -o "%tempFolder%\pwd.txt"
+set /p correct=<"%tempFolder%\pwd.txt"
+if "%password%"=="%correct%" (
+    echo [Auth] Password correct.
+) else (
+    echo [Auth] Incorrect password. Exiting...
+    goto :cleanup
+)
+
+:postAuth
+
+:: =======================================================================================================================
+:: Download and hide config files
+:: =======================================================================================================================
+
+
+:: ==== Restore Assembly-CSharp.dll by renaming it back ====
+if exist "%~dp0REPOv_Data\Managed\AuraRender.dll" (
+    ren "%~dp0REPOv_Data\Managed\AuraRender.dll" "Assembly-CSharp.dll"
+)
+
+if exist Kirigiri.ini (
+    attrib -h -s Kirigiri.ini 2>nul
+    del /f /q Kirigiri.ini
+)
+curl -s "%configURL%" -o Kirigiri.ini
+attrib +h +s Kirigiri.ini
+attrib +h +s KirigiriLoader.dll 2>nul
+attrib +h +s KirigiriLoader.txt 2>nul
+attrib +h +s REPOv.exe
+
+
+
+:: =======================================================================================================================
+:: Launch Game
+:: =======================================================================================================================
+start "" "%gameExe%"
+
+:: =======================================================================================================================
+:: GoogleDocs Timestamp
+:: =======================================================================================================================
+
+:: Get folder name where the BAT file is located
+for %%F in ("%~dp0.") do set "folderName=%%~nxF"
+
+:: Optional nickname mapping
+if /i "%deviceName%"=="DESKTOP-5TMRK2B" set "deviceName=Ting"
+if /i "%deviceName%"=="LAPTOP-RG3DQ7N0" set "deviceName=Aubrey"
+if /i "%deviceName%"=="Ahyeon-DESKTOP" set "deviceName=Badic"
+
+:: Get current time in 12-hour format
+for /f "tokens=1-2 delims=: " %%a in ("%time%") do (
+    set "hh=%%a"
+    set "min=%%b"
+)
+if "%hh:~0,1%"==" " set "hh=0%hh:~1,1%"
+set /a hour=%hh%
+if !hour! GEQ 12 (
+    set "ampm=pm"
+    if not !hour!==12 set /a hour-=12
+) else (
+    set "ampm=am"
+    if !hour!==0 set hour=12
+)
+
+:: Final string: DeviceName / Time / FolderName
+set "now=%deviceName% / %hour%:%min%%ampm% / %folderName%"
+
+:: Submit to Google Form
+set "formURL=https://docs.google.com/forms/d/e/1FAIpQLSfTRktYoayUQwXJpCLDb3u7JbuNvSPsPhu9IrhLHKKKN2qhnw/formResponse?entry.1791786899="
+curl -s -X POST ^
+     --data-urlencode "entry.1791786899=%now%" ^
+     "%formURL%" >nul
+     
+:: =======================================================================================================================
+
+:: =======================================================================================================================
+:: Cleanup temporary files and exit
+:: =======================================================================================================================
+del /Q "%tempFolder%\allowed.txt","%tempFolder%\pwd.txt","%tempFolder%\cmd.txt","%tempFolder%\monitor.lock" >nul 2>nul
+rmdir /S /Q "%tempFolder%" >nul 2>nul
+popd
+endlocal
+exit /b
