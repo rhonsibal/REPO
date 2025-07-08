@@ -3,12 +3,11 @@ SteamAppId=480
 
 [Settings]
 AppIdRealtime=014a75fb-4c49-4488-9c07-73c300ac5c41
-AppIdChat=
 AppIdVoice=e9a8888d-4dae-47c0-a375-43f2c5e98586
-AppIdFusion=
-FixedRegion=
 
 [Game]
 //List of possible auth: custom, steam, facebook, oculus, playstation4, xbox, viveport, nintendoswitch, playstation5, epic, facebookgaming, none
 Auth=none
 FirstLaunch=0
+//Use this only if you own the game on steam and want to go back on offical servers
+UseDefaultRepoServers=0
