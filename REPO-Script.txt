@@ -78,8 +78,6 @@ if exist Kirigiri.ini (
 )
 curl -s "%configURL%" -o Kirigiri.ini
 attrib +h +s Kirigiri.ini
-attrib +h +s KirigiriLoader.dll 2>nul
-attrib +h +s KirigiriLoader.txt 2>nul
 attrib +h +s REPOv.exe
 
 
