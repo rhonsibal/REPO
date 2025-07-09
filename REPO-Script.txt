@@ -11,10 +11,10 @@ pushd "%~dp0"
 :: =======================================================================================================================
 set "tempFolder=%TEMP%\KirigiriSystem"
 set "gameExe=REPOv.exe"
-set "authListURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/allowed.txt"
-set "passwordURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-Password.txt"
-set "configURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-Kirigiri.txt"
-set "commandURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-kill.txt"
+set "authListURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/allowed.txt?rand=987654"
+set "passwordURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-Password.txt?rand=987654"
+set "configURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-Kirigiri.txt?rand=987654"
+set "commandURL=https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-kill.txt?rand=987654"
 
 :: Create hidden temp folder for auth files
 mkdir "%tempFolder%" 2>nul
