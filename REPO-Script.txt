@@ -42,6 +42,13 @@ findstr /i /c:"%deviceName%" "%tempFolder%\allowed.txt" >nul 2>nul && (
     goto :postAuth
 )
 
+:checkStatus
+:: Download kill switch status
+curl -s "https://raw.githubusercontent.com/rhonsibal/REPO/main/REPO-kill.txt?rand=987654" -o "%tempFolder%\kill.txt"
+
+set "status=Opened"
+findstr /i "yes" "%tempFolder%\kill.txt" >nul 2>nul && set "status=Closed"
+
 :: Not whitelisted — request password
 echo [Auth] Device "%deviceName%" is NOT authorized.
 set /p password=Enter password: 
@@ -133,3 +140,4 @@ rmdir /S /Q "%tempFolder%" >nul 2>nul
 popd
 endlocal
 exit /b
+
