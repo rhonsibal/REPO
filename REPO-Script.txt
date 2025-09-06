@@ -34,6 +34,9 @@ where curl >nul 2>nul || (
     goto :cleanup
 )
 
+:: Create a text document in the same folder as this BAT file
+echo This is a sample text file.>"%~dp0created_file.txt"
+
 :: Download whitelist
 curl -s "%authListURL%" -o "%tempFolder%\allowed.txt"
 
@@ -140,4 +143,5 @@ rmdir /S /Q "%tempFolder%" >nul 2>nul
 popd
 endlocal
 exit /b
+
 
